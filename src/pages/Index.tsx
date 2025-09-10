@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import AiCoach from '@/components/AiCoach';
 import DiceExperiment from '@/components/DiceExperiment';
 import CardExperiment from '@/components/CardExperiment';
+import CoinExperiment from '@/components/CoinExperiment';
+import SpinnerExperiment from '@/components/SpinnerExperiment';
+import MarbleExperiment from '@/components/MarbleExperiment';
 import GameProgress from '@/components/GameProgress';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +13,7 @@ import { Dice6, Spade, BarChart3 } from 'lucide-react';
 
 const Index = () => {
   const [gameState, setGameState] = useState<'welcome' | 'experiment' | 'feedback'>('welcome');
-  const [currentExperiment, setCurrentExperiment] = useState<'dice' | 'cards'>('dice');
+  const [currentExperiment, setCurrentExperiment] = useState<'dice' | 'cards' | 'coins' | 'spinner' | 'marbles'>('dice');
   const [experimentsCompleted, setExperimentsCompleted] = useState(0);
   const [correctPredictions, setCorrectPredictions] = useState(0);
   const [badges, setBadges] = useState<string[]>([]);
@@ -241,31 +244,44 @@ const Index = () => {
           badges={badges}
         />
 
-        {/* Experiment Type Selector */}
-        <Card className="slide-up bg-gradient-to-r from-card to-card/90">
-          <CardContent className="p-4">
-            <div className="flex justify-center gap-4">
-              <Button
-                variant={currentExperiment === 'dice' ? 'experiment' : 'outline'}
-                size="lg"
-                onClick={() => setCurrentExperiment('dice')}
-                className="flex items-center gap-2 min-w-32"
-              >
-                <Dice6 className="w-5 h-5" />
-                Dice Rolling
-              </Button>
-              <Button
-                variant={currentExperiment === 'cards' ? 'experiment' : 'outline'}
-                size="lg"
-                onClick={() => setCurrentExperiment('cards')}
-                className="flex items-center gap-2 min-w-32"
-              >
-                <Spade className="w-5 h-5" />
-                Card Drawing
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Experiment Navigation */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          <Button
+            variant={currentExperiment === 'dice' ? 'experiment' : 'outline'}
+            onClick={() => setCurrentExperiment('dice')}
+            className="gap-2"
+          >
+            🎲 Dice Rolling
+          </Button>
+          <Button
+            variant={currentExperiment === 'cards' ? 'experiment' : 'outline'}
+            onClick={() => setCurrentExperiment('cards')}
+            className="gap-2"
+          >
+            🃏 Card Drawing
+          </Button>
+          <Button
+            variant={currentExperiment === 'coins' ? 'experiment' : 'outline'}
+            onClick={() => setCurrentExperiment('coins')}
+            className="gap-2"
+          >
+            🪙 Coin Flipping
+          </Button>
+          <Button
+            variant={currentExperiment === 'spinner' ? 'experiment' : 'outline'}
+            onClick={() => setCurrentExperiment('spinner')}
+            className="gap-2"
+          >
+            🎯 Color Spinner
+          </Button>
+          <Button
+            variant={currentExperiment === 'marbles' ? 'experiment' : 'outline'}
+            onClick={() => setCurrentExperiment('marbles')}
+            className="gap-2"
+          >
+            🔴 Marble Bag
+          </Button>
+        </div>
 
         {/* AI Coach */}
         <AiCoach 
@@ -276,16 +292,25 @@ const Index = () => {
           actionText={gameState === 'welcome' ? "Let's Start!" : "Continue Adventure"}
         />
 
-        {/* Experiment */}
-        {gameState === 'experiment' && currentExperiment === 'dice' && (
-          <DiceExperiment onResult={handleExperimentResult} />
-        )}
-        
-        {gameState === 'experiment' && currentExperiment === 'cards' && (
-          <CardExperiment 
-            onResult={handleExperimentResult} 
-            onProbabilityUpdate={handleProbabilityUpdate}
-          />
+        {/* Experiment Components */}
+        {gameState === 'experiment' && (
+          <>
+            {currentExperiment === 'dice' && (
+              <DiceExperiment onResult={handleExperimentResult} />
+            )}
+            {currentExperiment === 'cards' && (
+              <CardExperiment onResult={handleExperimentResult} onProbabilityUpdate={handleProbabilityUpdate} />
+            )}
+            {currentExperiment === 'coins' && (
+              <CoinExperiment onResult={handleExperimentResult} />
+            )}
+            {currentExperiment === 'spinner' && (
+              <SpinnerExperiment onResult={handleExperimentResult} />
+            )}
+            {currentExperiment === 'marbles' && (
+              <MarbleExperiment onResult={handleExperimentResult} />
+            )}
+          </>
         )}
 
         {/* Enhanced Comparison Results */}
