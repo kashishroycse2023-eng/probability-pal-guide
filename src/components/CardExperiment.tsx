@@ -309,6 +309,65 @@ const CardExperiment: React.FC<CardExperimentProps> = ({ onResult, onProbability
               ))}
             </div>
             
+            {/* Detailed Calculation Display */}
+            <div className="bg-primary/5 p-4 rounded-lg space-y-3 border border-primary/20">
+              <h4 className="font-semibold text-primary flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                Complete Probability Calculation
+              </h4>
+              
+              {experimentType === 'multi-draw' && prediction.type === 'all-hearts' && (
+                <div className="space-y-2 text-sm">
+                  <div className="font-medium">Calculating "All Hearts" Probability:</div>
+                  <div className="bg-white/50 p-3 rounded">
+                    <div>• Cards before draw: {deck.length - (drawnCards.length - numCardsToDraw)} total</div>
+                    <div>• Hearts before draw: {deck.slice(drawnCards.length - numCardsToDraw).filter(card => card.suit === 'hearts').length}</div>
+                    <div>• Drawing {numCardsToDraw} cards</div>
+                    <div className="mt-2 font-medium">
+                      Calculation: {deck.slice(drawnCards.length - numCardsToDraw).filter(card => card.suit === 'hearts').length}/{deck.length - (drawnCards.length - numCardsToDraw)} × {Math.max(0, deck.slice(drawnCards.length - numCardsToDraw).filter(card => card.suit === 'hearts').length - 1)}/{Math.max(1, deck.length - (drawnCards.length - numCardsToDraw) - 1)} × ...
+                    </div>
+                    <div className="text-primary font-bold">
+                      = {(Math.pow(deck.slice(drawnCards.length - numCardsToDraw).filter(card => card.suit === 'hearts').length / (deck.length - (drawnCards.length - numCardsToDraw)), numCardsToDraw) * 100).toFixed(2)}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {experimentType === 'face-cards' && prediction.type === 'at-least-one-face' && (
+                <div className="space-y-2 text-sm">
+                  <div className="font-medium">Calculating "At Least One Face Card" Probability:</div>
+                  <div className="bg-white/50 p-3 rounded">
+                    <div>• Face cards remaining: {deck.slice(drawnCards.length - numCardsToDraw).filter(card => card.isFace).length}</div>
+                    <div>• Non-face cards: {deck.slice(drawnCards.length - numCardsToDraw).filter(card => !card.isFace).length}</div>
+                    <div>• Using complement: 1 - P(no face cards)</div>
+                    <div className="mt-2 font-medium">
+                      Calculation: 1 - ({deck.slice(drawnCards.length - numCardsToDraw).filter(card => !card.isFace).length}/{deck.length - (drawnCards.length - numCardsToDraw)})^{numCardsToDraw}
+                    </div>
+                    <div className="text-primary font-bold">
+                      = {((1 - Math.pow(deck.slice(drawnCards.length - numCardsToDraw).filter(card => !card.isFace).length / (deck.length - (drawnCards.length - numCardsToDraw)), numCardsToDraw)) * 100).toFixed(2)}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Real-time Updates After Draw */}
+              <div className="border-t pt-3">
+                <div className="font-medium text-sm mb-2">Updated Probabilities for Next Draw:</div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="bg-white/30 p-2 rounded">
+                    <div className="font-medium">Hearts Remaining:</div>
+                    <div>{deck.slice(drawnCards.length).filter(card => card.suit === 'hearts').length} out of {currentProbs.remaining}</div>
+                    <div className="text-primary font-bold">{currentProbs.hearts.toFixed(1)}%</div>
+                  </div>
+                  <div className="bg-white/30 p-2 rounded">
+                    <div className="font-medium">Face Cards:</div>
+                    <div>{deck.slice(drawnCards.length).filter(card => card.isFace).length} out of {currentProbs.remaining}</div>
+                    <div className="text-primary font-bold">{currentProbs.face.toFixed(1)}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             {drawnCards.length >= numCardsToDraw && (
               <div className="text-center">
                 <Badge variant="outline" className="text-sm p-2">
