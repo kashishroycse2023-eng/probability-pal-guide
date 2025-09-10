@@ -63,7 +63,15 @@ const CardExperiment: React.FC<CardExperimentProps> = ({ onResult, onProbability
 
   const calculateCurrentProbabilities = () => {
     const remainingCards = deck.length - drawnCards.length;
-    if (remainingCards === 0) return { hearts: 0, face: 0, sequence: 0 };
+    if (remainingCards === 0 || deck.length === 0) {
+      return { 
+        hearts: 0, 
+        face: 0, 
+        allHearts: 0, 
+        atLeastOneFace: 0, 
+        remaining: 0 
+      };
+    }
     
     const remainingHearts = deck.slice(drawnCards.length).filter(card => card.suit === 'hearts').length;
     const remainingFace = deck.slice(drawnCards.length).filter(card => card.isFace).length;
